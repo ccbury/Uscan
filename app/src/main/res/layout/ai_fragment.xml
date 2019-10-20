@@ -3,7 +3,7 @@
     android:id="@+id/imageai_fragment"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_blue_bright"
+    android:background="#99b3ff"
     android:orientation="horizontal">
 
 
@@ -34,7 +34,7 @@
         android:layout_centerInParent="true"
         android:background="@drawable/buttonshape"
         android:onClick="scanNow"
-        android:text="Image"
+        android:text="Conor is gay"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="13sp" />
