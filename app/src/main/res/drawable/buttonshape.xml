@@ -6,26 +6,24 @@
         android:bottomLeftRadius="100dp"
         android:bottomRightRadius="100dp"
         />
-    <gradient
-        android:angle="315"
-        android:centerX="100%"
-        android:centerColor="#A8A8A8"
-        android:startColor="#FFFCFA"
-        android:endColor="#FFFFFF"
-        android:type="linear"
+    <solid
+        android:color="#000000"
         />
     <padding
-        android:left="63dp"
-        android:top="69dp"
-        android:right="87dp"
-        android:bottom="89dp"
+        android:left="0dp"
+        android:top="0dp"
+        android:right="0dp"
+        android:bottom="0dp"
         />
     <size
-        android:width="100dp"
-        android:height="100dp"
+        android:width="120dp"
+        android:height="120dp"
         />
-    <stroke
-        android:width="8dp"
-        android:color="#2E8BE8"
+    <stroke>
+    <gradient
+        android:startColor="#E8E8E8"
+        android:endColor="#000000"
+        android:type="linear"
         />
+    </stroke>
 </shape>
