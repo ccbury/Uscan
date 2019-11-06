@@ -7,7 +7,7 @@
         android:bottomRightRadius="100dp"
         />
     <solid
-        android:color="#000000"
+        android:color="#00a2e8"
         />
     <padding
         android:left="0dp"
@@ -19,11 +19,9 @@
         android:width="120dp"
         android:height="120dp"
         />
-    <stroke>
-    <gradient
-        android:startColor="#E8E8E8"
-        android:endColor="#000000"
-        android:type="linear"
-        />
-    </stroke>
+        <stroke
+            android:width="30dp"
+            android:color="#6600a2e8"
+            />
+
 </shape>
