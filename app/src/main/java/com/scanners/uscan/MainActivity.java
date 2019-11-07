@@ -8,9 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    //variables
     private TabAdapter adapter;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
