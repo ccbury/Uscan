@@ -89,7 +89,7 @@ public class AIFragment extends Fragment implements ScanResultReceiver, View.OnC
         }else{
             product_name.setText("Error No Photo Received....");
             product_name.setAllCaps(true);
-            product_name.setTextSize(30);
+            product_name.setTextSize(12);
         }
     }//End OnActivity result method
 

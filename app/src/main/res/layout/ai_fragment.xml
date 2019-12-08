@@ -25,8 +25,8 @@
         android:layout_width="225dp"
         android:layout_height="25dp"
         android:layout_above="@id/btn_scan_now"
-        android:layout_centerInParent="false"
-        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="56dp"
         android:visibility="visible" />
 
 </RelativeLayout>
