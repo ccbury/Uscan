@@ -3,6 +3,7 @@ package com.scanners.uscan;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -126,11 +127,10 @@ public class AIFragment extends Fragment implements ScanResultReceiver, View.OnC
             mView = itemView;
         }//End constructor
         //Create setDetails to add entry to results list. Displayed to user using list_layout.xml template
-        public void setDetails(Context ctx, String name, String price, String region, String link, String image, String description) {
+        public void setDetails(final Context ctx, String name, String price, String region, String link, String image, String description) {
             TextView product_name = mView.findViewById(R.id.name_text);
             TextView product_price = mView.findViewById(R.id.price_text);
             TextView product_region = mView.findViewById(R.id.region_text);
-            TextView product_link = mView.findViewById(R.id.link_text);
             TextView product_description = mView.findViewById(R.id.description_text);
             ImageView product_image = mView.findViewById(R.id.product_image);
             if(price == null){
@@ -142,13 +142,25 @@ public class AIFragment extends Fragment implements ScanResultReceiver, View.OnC
             if(description == null){
                 description ="Sorry. A description for this item is not currently available. We will remedy this issue as soon as possible. Please check back later!";
             }
+            final String link2 = link;
             product_name.setText("Name: "+name);
             product_description.setText("Description: "+description);
             product_price.setText("Price: "+price);
-            product_link.setText("Link: "+link);
             product_region.setText("Region: "+region);
             Glide.with(ctx).load(image).into(product_image);
-
+            product_image.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View mView) {
+                    if(link2!=null) {
+                        Uri uri = Uri.parse(link2);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        ctx.startActivity(intent);
+                    }else{
+                        Uri uri = Uri.parse("https://www.ncirl.ie/");
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        ctx.startActivity(intent);
+                    }
+                }
+            });
         }//End setDetails
     }//End productViewHolder
 }//End class
