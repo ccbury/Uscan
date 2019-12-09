@@ -1,10 +1,12 @@
 package com.scanners.uscan;
 
+
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,9 +27,10 @@ public class SearchFragment extends Fragment {
     RecyclerView mResultList;
     ImageButton mSearchBtn;
     EditText mSearchField;
+    Spanned Text;
     int i;
 
-
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.search_fragment, container, false);
 
@@ -64,9 +67,9 @@ public class SearchFragment extends Fragment {
 
     }//End onCreateView
 
-    private void firebaseProductSearch(String searchText) {
+    private void firebaseProductSearch(String searchText) { ;
         //Add query to search database for entries that match users search
-        Query firebaseSearchQuery = mProductDatabase.orderByChild("Name").startAt(searchText).endAt(searchText+"\uf8ff");
+        Query firebaseSearchQuery = mProductDatabase.orderByChild("name").startAt(searchText).endAt(searchText+"\uf8ff");
         //Create Recycler Adapter to hold all appropriate entries
         FirebaseRecyclerAdapter<products, ProductViewHolder> adapter = new FirebaseRecyclerAdapter<products, ProductViewHolder>(
                 products.class,
@@ -94,29 +97,33 @@ public class SearchFragment extends Fragment {
             mView = itemView;
         }//End constructor
         //Create setDetails to add entry to results list. Displayed to user using list_layout.xml template
-        public void setDetails(Context ctx, String Name, String Price, String Region, String Link, String Image, String Description) {
+        public void setDetails(Context ctx, String name, String price, String region, String link, String image, String description) {
             TextView product_name = mView.findViewById(R.id.name_text);
             TextView product_price = mView.findViewById(R.id.price_text);
             TextView product_region = mView.findViewById(R.id.region_text);
             TextView product_link = mView.findViewById(R.id.link_text);
             TextView product_description = mView.findViewById(R.id.description_text);
             ImageView product_image = mView.findViewById(R.id.product_image);
-            if(Price == null){
-                Price = "Not Available";
+            if(price == null){
+                price = "Not Available";
             }
-            if(Link == null){
-                Link = "Not Available";
+            if(link == null){
+                link = "Not Available";
             }
-            if(Description == null){
-                Description ="Sorry. A description for this item is not currently available. We will remedy this issue as soon as possible. Please check back later!";
+            if(description == null){
+                description ="Sorry. A description for this item is not currently available. We will remedy this issue as soon as possible. Please check back later!";
             }
 
-            product_name.setText(Name);
-            product_description.setText(Description);
-            product_price.setText(Price);
-            product_link.setText(Link);
-            product_region.setText(Region);
-            Glide.with(ctx).load(Image).into(product_image);
+            product_name.setText(name);
+            product_description.setText(description);
+            product_price.setText(price);
+
+
+
+
+            product_link.setText(link);
+            product_region.setText(region);
+            Glide.with(ctx).load(image).into(product_image);
         }//End setDetails
     }//End productViewHolder
 

@@ -1,23 +1,24 @@
 package com.scanners.uscan;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.bumptech.glide.Glide;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
@@ -30,21 +31,26 @@ import static android.app.Activity.RESULT_OK;
 
 public class AIFragment extends Fragment implements ScanResultReceiver, View.OnClickListener{
     Button myButton;
-    static View myView;
-    static DatabaseReference mProductDatabase;
-    static String searchText;
-    static TextView product_name;
+    View myView;
+    DatabaseReference mProductDatabase;
+    String searchText;
+    RecyclerView mResultList;
     private static final int CAMERA_REQUEST = 1888;
     FirebaseVisionImage image;
+    int i;
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.ai_fragment, container, false);
         myButton = (Button) myView.findViewById(R.id.btn_scan_now);
         myButton.setOnClickListener(this);
 
-        product_name = myView.findViewById(R.id.name_text);
+        mResultList = myView.findViewById(R.id.result_list);
 
-        mProductDatabase = FirebaseDatabase.getInstance().getReference("Items");
+        mResultList.setHasFixedSize(true);
+        mResultList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mProductDatabase = FirebaseDatabase.getInstance().getReference("Products");
 
         return myView;
 
@@ -74,58 +80,75 @@ public class AIFragment extends Fragment implements ScanResultReceiver, View.OnC
                     ArrayList<String> textArray = new ArrayList<String>();
                     ArrayList<Float> confidenceArray = new ArrayList<Float>();
                     ArrayList<String> confidenceStrArray = new ArrayList<String>();
-                    int i = 0;
+                    int ii = 0;
                     for (FirebaseVisionImageLabel label : labels) {
                         textArray.add(label.getText());
                         confidenceArray.add(label.getConfidence());
-                        confidenceStrArray.add(Float.toString(confidenceArray.get(i)));
-                        i++;
+                        confidenceStrArray.add(Float.toString(confidenceArray.get(ii)));
+                        ii++;
                     }
                     searchText = textArray.get(0);
                     setResult();
 
                 }
             });
-        }else{
-            product_name.setText("Error No Photo Received....");
-            product_name.setAllCaps(true);
-            product_name.setTextSize(12);
         }
     }//End OnActivity result method
 
-    public void setResult() {
+    private void setResult() {
+
+        //TestText.setText(searchText);
         //Queries database
-        mProductDatabase.orderByChild("name").equalTo(searchText).addChildEventListener(new ChildEventListener() {
-            //Add onChildAdded method. gets entry for query and creates object to store information in. Using products object.
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                products prod = dataSnapshot.getValue(products.class);
-                product_name.setAllCaps(false);
-                product_name.setTextSize(14);
-                product_name.setText("Name: "+searchText);
+        Query firebaseSearchQuery = mProductDatabase.orderByChild("name").startAt(searchText).endAt(searchText+"\uf8ff");
+        //Create Recycler Adapter to hold all appropriate entries
+        FirebaseRecyclerAdapter<products, ProductViewHolder> adapter = new FirebaseRecyclerAdapter<products, ProductViewHolder>(
+                products.class,
+                R.layout.list_layout,
+                ProductViewHolder.class,
+                firebaseSearchQuery
+        ){
+            //Create populateViewHolder to store database entries
+            protected void populateViewHolder(ProductViewHolder holder, products model, int position) {
+                i++;
+                holder.setDetails(myView.getContext(), model.getName(), model.getPrice(), model.getRegion(), model.getLink(), model.getImage(), model.getDescription());
+            }
 
 
-            }//End onChildAdded
-
-            //Unused methods for adding to database ect. Required for query to function.
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) { }
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
-            //End unused methods
-        });//Ends query
-
-        //If statement to remove information if query is unsuccessful
-        if(product_name.getText().toString().matches("")){
-            product_name.setText(searchText);
-            product_name.setAllCaps(true);
-            product_name.setTextSize(30);
-        }//End if statement
-
+        };//End recycler
+        mResultList.setAdapter(adapter);
     }//End setResult
+    public static class ProductViewHolder extends RecyclerView.ViewHolder {
 
+        //Used to ensure correct view is used
+        View mView;
+        public ProductViewHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
+        }//End constructor
+        //Create setDetails to add entry to results list. Displayed to user using list_layout.xml template
+        public void setDetails(Context ctx, String name, String price, String region, String link, String image, String description) {
+            TextView product_name = mView.findViewById(R.id.name_text);
+            TextView product_price = mView.findViewById(R.id.price_text);
+            TextView product_region = mView.findViewById(R.id.region_text);
+            TextView product_link = mView.findViewById(R.id.link_text);
+            TextView product_description = mView.findViewById(R.id.description_text);
+            ImageView product_image = mView.findViewById(R.id.product_image);
+            if(price == null){
+                price = "Not Available";
+            }
+            if(link == null){
+                link = "Not Available";
+            }
+            if(description == null){
+                description ="Sorry. A description for this item is not currently available. We will remedy this issue as soon as possible. Please check back later!";
+            }
+            product_name.setText(name);
+            product_description.setText(description);
+            product_price.setText(price);
+            product_link.setText(link);
+            product_region.setText(region);
+            Glide.with(ctx).load(image).into(product_image);
+
+        }//End setDetails
+    }//End productViewHolder
 }//End class
