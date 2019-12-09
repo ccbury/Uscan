@@ -142,11 +142,11 @@ public class AIFragment extends Fragment implements ScanResultReceiver, View.OnC
             if(description == null){
                 description ="Sorry. A description for this item is not currently available. We will remedy this issue as soon as possible. Please check back later!";
             }
-            product_name.setText(name);
-            product_description.setText(description);
-            product_price.setText(price);
-            product_link.setText(link);
-            product_region.setText(region);
+            product_name.setText("Name: "+name);
+            product_description.setText("Description: "+description);
+            product_price.setText("Price: "+price);
+            product_link.setText("Link: "+link);
+            product_region.setText("Region: "+region);
             Glide.with(ctx).load(image).into(product_image);
 
         }//End setDetails
